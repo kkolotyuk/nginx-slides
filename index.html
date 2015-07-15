@@ -67,14 +67,14 @@
 
         <section>
           <h3>Installation</h3>
-          <pre><code data-trim contenteditable>
+          <pre><code data-trim >
 $ sudo apt-get install nginx
           </code></pre>
         </section>
 
         <section>
           <h3>Dir structure</h3>
-          <pre><code data-trim contenteditable>
+          <pre><code data-trim >
 /etc/nginx
 ├── conf.d
 ├...
@@ -92,7 +92,7 @@ $ sudo apt-get install nginx
         <section>
           <section>
 	          <h3>Simplest config</h3>
-	          <pre><code data-trim contenteditable>
+	          <pre><code data-trim >
 server {
     listen 80;
     root /usr/share/nginx/html;
@@ -101,7 +101,7 @@ server {
 	      </section>
           <section>
 	          <h3>More config options</h3>
-	          <pre><code data-trim contenteditable>
+	          <pre><code data-trim >
 server {
   listen 80;
   root /PATH/TO/WEBROOT;
@@ -129,7 +129,7 @@ server {
           <section>
 	        <h4>Static site example with localhost</h4>
 	        <p>Create site</p>
-	        <pre><code data-trim contenteditable>
+	        <pre><code data-trim >
 $ cd
 $ mkdir simple-site
 $ cd simple-site
@@ -150,16 +150,18 @@ NGINX is very fast!
           <section>
             <h4>Static site example with localhost</h4>
             <p>Configure virtual host</p>
-            <pre><code data-trim contenteditable>
+            <pre><code data-trim >
 $ cd /etc/nginx/sites-available
 $ sudo touch simple-site.conf
-$ sudo echo 'server {
+echo 'server {
     listen 80;
     root /home/sevenbits/simple-site;
-}' >> simple-site.conf
-$ sudo ln -s /etc/nginx/sites-available/simple-site.conf /etc/nginx/sites-enabled/simple-site.conf
-$ service nginx reload
+}' | sudo tee --append simple-site.conf 
+$ sudo ln -s /etc/nginx/sites-available/simple-site.conf ../sites-enabled/
+$ sudo rm ../sites-enabled/default
+$ sudo service nginx reload
             </code></pre>
+Look at <a href="http://localhost/hello.html">http://localhost/hello.html</a>
           </section>
         </section>
 
@@ -177,24 +179,30 @@ $ service nginx reload
           <h3>Example with hostname</h3>
 		  <ol>
 	  	    <li>Edit /etc/hosts
-	            <pre><code data-trim contenteditable>
-$ sudo echo '127.0.0.1 simple-site.local' > /etc/hosts
+	            <pre><code data-trim >
+$ echo '127.0.0.1 simple-site.local' | sudo tee --append /etc/hosts
                 </code></pre>
 	  	    </li>
 	  	    
-	  	  	<li>Change simple-site.conf</li>
-	            <pre><code data-trim contenteditable>
+	  	  	<li>Change simple-site.conf
+	            <pre><code data-trim >
 server {
     listen 80;
-    server_name: simple-site.local;
+    server_name simple-site.local;
     root /home/sevenbits/simple-site;
 }
                 </code></pre>
-			<li>Reload nginx</li>
-	            <pre><code data-trim contenteditable>
+          </li>
+			<li>Reload nginx
+	            <pre><code data-trim >
 $ service nginx reload
                 </code></pre>
+      </li>
+       <li> 
+          Look at <a href="http://simple-site.local/hello.html">http://simple-site.local/hello.html</a>
+      </li>
 		  </ol>
+
         </section>
 
         <section>
@@ -205,7 +213,7 @@ $ service nginx reload
           </section>
           <section>
             <h3>Example with Tomcat</h3>
-            <pre><code data-trim contenteditable>
+            <pre><code data-trim >
 server {
     listen 80;
     server_name tomcat.project;
@@ -226,25 +234,26 @@ server {
           <h3>Basic auth</h3>
 		  <ol>
 	  	    <li>Make login/password
-	            <pre><code data-trim contenteditable>
+	            <pre><code data-trim >
 $ sudo apt-get install apache2-utils
 $ htpasswd -c /home/sevenbits/.htpasswd sevenbits
                 </code></pre>
 	  	    </li>
 	  	    
 	  	  	<li>Change simple-site.conf</li>
-	            <pre><code data-trim contenteditable>
+	            <pre><code data-trim >
 server {
     listen 80;
-    server_name: simple-site.local;
+    server_name simple-site.local;
     root /home/sevenbits/simple-site;
     location / {
        auth_basic            "Restricted";
        auth_basic_user_file  /home/sevenbits/.htpasswd;
+    }
 }
                 </code></pre>
 			<li>Reload nginx</li>
-	            <pre><code data-trim contenteditable>
+	            <pre><code data-trim >
 $ service nginx reload
                 </code></pre>
 		  </ol>
